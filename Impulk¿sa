@@ -1,0 +1,180 @@
+const DATA = [
+  {
+    emoji: "🛍️",
+    title: "Asistente de atención al cliente",
+    company: "Retail Plus S.A.",
+    loc: "CABA · Presencial",
+    salary: "$320k – $380k",
+    type: "primer",
+    tags: [["Primer empleo", "ty"], ["Atención al cliente", "tn"], ["Part-time", "tn"]],
+    desc: "Buscamos personas con ganas de aprender. Te capacitamos desde el primer día. No se requiere experiencia previa en el rubro.",
+    posted: "Hace 2 días",
+    badge: "primer",
+    feat: false
+  },
+  {
+    emoji: "💻",
+    title: "Trainee en soporte técnico",
+    company: "SoftHouse Argentina",
+    loc: "Remoto",
+    salary: "$400k – $500k",
+    type: "capacitacion",
+    tags: [["Capacitación incluida", "tg"], ["Tecnología", "tn"], ["Remoto", "tg"]],
+    desc: "Programa de 3 meses con mentoreo. Buscamos actitud y disposición. Ideal para quienes quieren ingresar al mundo tech sin experiencia formal.",
+    posted: "Hoy",
+    badge: "feat",
+    feat: true
+  },
+  {
+    emoji: "🏥",
+    title: "Administrativa en clínica",
+    company: "Centro Médico del Sur",
+    loc: "Quilmes · Presencial",
+    salary: "$350k – $420k",
+    type: "reinsercion",
+    tags: [["Reinserción laboral", "ty"], ["Administración", "tn"], ["Full-time", "tgreen"]],
+    desc: "Valoramos experiencias como cuidado del hogar o tareas de organización familiar. Flexibilidad horaria para madres.",
+    posted: "Hace 1 semana",
+    badge: "primer",
+    feat: false
+  },
+  {
+    emoji: "📦",
+    title: "Operaria de logística",
+    company: "Distribuidora El Norte",
+    loc: "La Matanza · Presencial",
+    salary: "$290k – $340k",
+    type: "primer",
+    tags: [["Sin experiencia", "tg"], ["Logística", "tn"], ["Con beneficios", "tgreen"]],
+    desc: "Incorporamos personal para nuestro depósito. Capacitación en el puesto. Nos importa la predisposición y las ganas de trabajar.",
+    posted: "Hace 3 días",
+    badge: null,
+    feat: false
+  },
+  {
+    emoji: "📣",
+    title: "Asistente de marketing digital",
+    company: "Agencia Creativa NW",
+    loc: "Remoto",
+    salary: "$380k – $450k",
+    type: "capacitacion",
+    tags: [["Capacitación incluida", "tg"], ["Marketing", "tn"], ["Remoto", "tg"]],
+    desc: "Si te gustan las redes y la comunicación, este puesto es para vos. Enseñamos todo. Valoramos ideas frescas.",
+    posted: "Hace 5 días",
+    badge: null,
+    feat: false
+  },
+  {
+    emoji: "🏦",
+    title: "Auxiliar contable junior",
+    company: "Estudio Contable Gómez & Asoc.",
+    loc: "San Justo · Presencial",
+    salary: "$310k – $370k",
+    type: "primer",
+    tags: [["Primer empleo", "ty"], ["Administración", "tn"], ["Part-time", "tn"]],
+    desc: "Abiertos a recibir estudiantes o recién egresadas. Horario flexible para combinar con el estudio.",
+    posted: "Hace 4 días",
+    badge: "primer",
+    feat: false
+  },
+  {
+    emoji: "🎓",
+    title: "Tutora de apoyo escolar",
+    company: "Educar Juntos ONG",
+    loc: "Lomas de Zamora · Presencial",
+    salary: "$250k – $300k",
+    type: "reinsercion",
+    tags: [["Reinserción laboral", "ty"], ["Educación", "tn"], ["Part-time", "tn"]],
+    desc: "Valoramos la experiencia de madres que han enseñado a sus hijos o participado en actividades comunitarias.",
+    posted: "Hace 2 días",
+    badge: null,
+    feat: false
+  },
+  {
+    emoji: "🧴",
+    title: "Vendedora de mostrador",
+    company: "Farmacias Vida Plena",
+    loc: "Lanús · Presencial",
+    salary: "$330k – $390k",
+    type: "capacitacion",
+    tags: [["Capacitación incluida", "tg"], ["Ventas", "tn"], ["Beneficios de salud", "tgreen"]],
+    desc: "Capacitamos en productos y protocolo de atención. Queremos personas con calidez humana. No se requiere experiencia en farmacia.",
+    posted: "Hoy",
+    badge: null,
+    feat: false
+  }
+];
+
+let activeFilter = "all";
+
+function setFilter(el, f) {
+  document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+  el.classList.add("active");
+  activeFilter = f;
+  render();
+}
+
+function toggleArea(el) {
+  document.querySelectorAll(".area-pill").forEach(p => p.classList.remove("active-area"));
+  el.classList.add("active-area");
+}
+
+function render() {
+  const q = document.getElementById("q").value.toLowerCase();
+  const filtered = DATA.filter(j => {
+    const fm = activeFilter === "all" || j.type === activeFilter;
+    const qm = !q || j.title.toLowerCase().includes(q) || j.company.toLowerCase().includes(q);
+    return fm && qm;
+  });
+
+  document.getElementById("cnt").textContent = filtered.length;
+  const list = document.getElementById("jlist");
+  list.innerHTML = "";
+
+  if (!filtered.length) {
+    list.innerHTML = '<div class="empty">No encontramos empleos con ese criterio.<br>Probá ajustando los filtros.</div>';
+    return;
+  }
+
+  filtered.forEach(j => {
+    const card = document.createElement("div");
+    card.className = "jcard" + (j.feat ? " featured" : "");
+
+    const badgeHtml =
+      j.badge === "feat"
+        ? '<div class="badge-feat">✦ Destacado</div>'
+        : j.badge === "primer"
+        ? '<div class="badge-primer">✶ Primer empleo</div>'
+        : "";
+
+    const tagsHtml = j.tags
+      .map(([t, cls]) => `<span class="jtag ${cls}">${t}</span>`)
+      .join("");
+
+    card.innerHTML = `
+      ${badgeHtml}
+      <div class="jtop">
+        <div class="jlogo">${j.emoji}</div>
+        <div class="jinfo">
+          <div class="jtitle">${j.title}</div>
+          <div class="jcompany">${j.company} · ${j.loc}</div>
+        </div>
+      </div>
+      <div class="jtags">${tagsHtml}</div>
+      <div class="jdesc">${j.desc}</div>
+      <div class="jfoot">
+        <div class="jmeta">
+          <span>💲 ${j.salary}</span>
+          <span>🕐 ${j.posted}</span>
+        </div>
+        <div class="jactions">
+          <button class="btn-save" title="Guardar" onclick="event.stopPropagation()">♡</button>
+          <button class="btn-apply">Postularme</button>
+        </div>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+render();
